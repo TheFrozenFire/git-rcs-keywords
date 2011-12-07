@@ -1,13 +1,29 @@
-#!/usr/bin/perl -p
+#!/usr/bin/php
+<?php
 #
 # @brief  Git filter to implement rcs keyword expansion as seen in cvs and svn.
 # @author Martin Turon
+# @author Justin Martin
 #
 # Copyright (c) 2009-2011 Turon Technologies, Inc.  All rights reserved.
+$search = array(
+ "/\$Id[^\$]*\$/",
+ "/\$Date[^\$]*\$/",
+ "/\$Author[^\$]*\$/",
+ "/\$Source[^\$]*\$/",
+ "/\$File[^\$]*\$/",
+ "/\$Revision[^\$]*\$/"
+);
 
-s/\$Id[^\$]*\$/\$Id\$/; 
-s/\$Date[^\$]*\$/\$Date\$/;
-s/\$Author[^\$]*\$/\$Author\$/; 
-s/\$Source[^\$]*\$/\$Source\$/; 
-s/\$File[^\$]*\$/\$File\$/; 
-s/\$Revision[^\$]*\$/\$Revision\$/;
+$replace = array(
+ "\$Id\$",
+ "\$Date\$",
+ "\$Author\$",
+ "\$Source\$",
+ "\$File\$",
+ "\$Revision\$"
+);
+
+$data = fopen("php://stdin", "r");
+while($line = fgets($data)) echo preg_replace($search, $replace, $line);
+?>

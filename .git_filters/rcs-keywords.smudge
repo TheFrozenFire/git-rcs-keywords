@@ -1,7 +1,8 @@
-#!/usr/bin/perl
-#
+#!/usr/bin/php
+<?php
 # @brief  Git filter to implement rcs keyword expansion as seen in cvs and svn.
 # @author Martin Turon
+# @author Justin Martin
 #
 # Usage:
 #    .git_filter/rcs-keywords.smudge file_path < file_contents
@@ -18,32 +19,37 @@
 #
 # Copyright (c) 2009-2011 Turon Technologies, Inc.  All rights reserved.
 
-$path = shift;
-$path =~ /.*\/(.*)/;
-$filename = $1;
+$path = $argv[1];
+$filename = pathinfo($path, PATHINFO_FILENAME);
 
-if (0 == length($filename)) {
-	$filename = $path;
-}
+$revision = explode(PHP_EOL, `git log -- {$path} | head -n 3`);
+preg_match("/^Author:\s*(.*)\s*$/m", $revision[1], $author);
+$author = $author[1];
+preg_match("/\s*(.*)\s*<.*/", $author, $name);
+$name = $name[1];
+preg_match("/^Date:\s*(.*)\s*$/m", $revision[2], $date);
+$date = $date[1];
+preg_match("/^commit (.*)$/m", $revision[0], $ident);
+$ident = $ident[1];
 
-# Need to grab filename and to use git log for this to be accurate.
-$rev = `git log -- $path | head -n 3`;
-$rev =~ /^Author:\s*(.*)\s*$/m;
-$author = $1;
-$author =~ /\s*(.*)\s*<.*/;
-$name = $1;
-$rev =~ /^Date:\s*(.*)\s*$/m;
-$date = $1;
-$rev =~ /^commit (.*)$/m;
-$ident = $1;
+$search = array(
+ "/\$Date[^\$]*\$/",
+ "/\$Author[^\$]*\$/",
+ "/\$Id[^\$]*\$/",
+ "/\$File[^\$]*\$/",
+ "/\$Source[^\$]*\$/",
+ "/\$Revision[^\$]*\$/"
+);
 
-while (<STDIN>) {
-    s/\$Date[^\$]*\$/\$Date:   $date \$/;
-    s/\$Author[^\$]*\$/\$Author: $author \$/;
-    s/\$Id[^\$]*\$/\$Id: $filename | $date | $name \$/;
-    s/\$File[^\$]*\$/\$File:   $filename \$/;
-    s/\$Source[^\$]*\$/\$Source: $path \$/;
-	s/\$Revision[^\$]*\$/\$Revision: $ident \$/;
-} continue {
-    print or die "-p destination: $!\n";
-}
+$replace = array(
+ "\$Date:   {$date} \$",
+ "\$Author: {$author} \$",
+ "\$Id: {$filename} | {$date} | {$name} \$",
+ "\$File:   {$filename} \$",
+ "\$Source: {$path} \$",
+ "\$Revision: {$ident} \$"
+);
+
+$data = fopen("php://stdin", "r");
+while($line = fgets($data)) echo preg_replace($search, $replace, $line);
+?>
