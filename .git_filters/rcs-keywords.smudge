@@ -50,6 +50,6 @@ $replace = array(
  "\$Revision: {$ident} \$"
 );
 
-$data = fopen("php://stdin", "r");
-while($line = fgets($data)) echo preg_replace($search, $replace, $line);
+$data = stream_get_contents(fopen("php://stdin", "r"));
+echo preg_replace($search, $replace, $data);
 ?>
