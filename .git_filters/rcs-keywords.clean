@@ -7,12 +7,12 @@
 #
 # Copyright (c) 2009-2011 Turon Technologies, Inc.  All rights reserved.
 $search = array(
- "/\$Id[^\$]*\$/",
- "/\$Date[^\$]*\$/",
- "/\$Author[^\$]*\$/",
- "/\$Source[^\$]*\$/",
- "/\$File[^\$]*\$/",
- "/\$Revision[^\$]*\$/"
+ '/\$Id[^$]*\$/',
+ '/\$Date[^$]*\$/',
+ '/\$Author[^$]*\$/',
+ '/\$Source[^$]*\$/',
+ '/\$File[^$]*\$/',
+ '/\$Revision[^$]*\$'
 );
 
 $replace = array(
@@ -24,6 +24,6 @@ $replace = array(
  "\$Revision\$"
 );
 
-$data = stream_get_contents(fopen("php://stdin", "r"));
+$data = stream_get_contents(STDIN);
 echo preg_replace($search, $replace, $data);
 ?>
