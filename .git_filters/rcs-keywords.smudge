@@ -33,12 +33,12 @@ preg_match("/^commit (.*)$/m", $revision[0], $ident);
 $ident = $ident[1];
 
 $search = array(
- "/\$Date[^\$]*\$/",
- "/\$Author[^\$]*\$/",
- "/\$Id[^\$]*\$/",
- "/\$File[^\$]*\$/",
- "/\$Source[^\$]*\$/",
- "/\$Revision[^\$]*\$/"
+ '/\$Date[^$]*\$/',
+ '/\$Author[^$]*\$/',
+ '/\$Id[^$]*\$/',
+ '/\$File[^$]*\$/',
+ '/\$Source[^$]*\$/',
+ '/\$Revision[^$]*\$/'
 );
 
 $replace = array(
@@ -50,6 +50,6 @@ $replace = array(
  "\$Revision: {$ident} \$"
 );
 
-$data = stream_get_contents(fopen("php://stdin", "r"));
+$data = stream_get_contents(STDIN);
 echo preg_replace($search, $replace, $data);
 ?>
