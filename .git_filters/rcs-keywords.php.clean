@@ -12,7 +12,7 @@ $search = array(
  '/\$Author[^$]*\$/',
  '/\$Source[^$]*\$/',
  '/\$File[^$]*\$/',
- '/\$Revision[^$]*\$'
+ '/\$Revision[^$]*\$/'
 );
 
 $replace = array(
